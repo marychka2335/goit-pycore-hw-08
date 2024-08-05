@@ -1,17 +1,18 @@
 from collections import UserDict
 from datetime import datetime, timedelta
 from birthday import DATE_FORMAT
+from record import Record
 
 def is_weekend_day(day):
     return day > 4
 
 class AddressBook(UserDict):
-    def add_record(self, record):
+    def add_record(self, record: Record):
         if record.name.value in self.data:
             raise KeyError(f"Record with name '{record.name.value}' already exists.")
         self.data[record.name.value] = record
 
-    def find(self, name):
+    def find(self, name: str) -> Record:
         record = self.data.get(name, None)
         if record is None:
             raise KeyError(f"Record with name '{name}' is not found.")
@@ -28,10 +29,11 @@ class AddressBook(UserDict):
         for name, record in self.data.items():
             if record.birthday:
                 birthday = record.birthday.value.replace(year=today.year).date()
+            
+            if birthday < today:
+                    birthday = timedelta_days = (birthday - today).days
 
-                timedelta_days = (birthday - today).days
-
-                if 0 <= timedelta_days <= 7:
+            if 0 <= timedelta_days <= 7:
                     if is_weekend_day(birthday.weekday()):
                         days_delta = 2 if birthday.weekday() == 5 else 1
                         congratulation_date = birthday + timedelta(days=days_delta)
@@ -41,10 +43,7 @@ class AddressBook(UserDict):
                     upcoming_birthdays.append(
                         {
                             "name": name,
-                            "congratulation_date": congratulation_date.strftime(
-                                DATE_FORMAT
-                            ),
-                        }
+                            "birthday": congratulation_date.strftime(DATE_FORMAT)}
                     )
 
         return upcoming_birthdays

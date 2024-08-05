@@ -4,6 +4,7 @@ from error import input_error
 from storage import load_data, save_data
 
 not_found_message = "Contact does not exist, you can add it"
+ADDRESS_BOOK_FILE = 'address_book.pkl'
 
 @input_error
 def add_contact(args, book: AddressBook):
@@ -104,15 +105,15 @@ def parse_input(user_input):
 
 
 def main():
-    book = load_data()
+    book = load_data(ADDRESS_BOOK_FILE) 
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
         command, args = parse_input(user_input)
 
         if command in ["close", "exit"]:
+            save_data(book, ADDRESS_BOOK_FILE)
             print("Good bye!")
-            save_data(book)
             break
         elif command == "hello":
             print("How can I help you?")
